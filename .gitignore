@@ -2,6 +2,6 @@
 test_tmp/
 configs/
 checkpoints/
-pretrained/
+pretrained/*.tar
 *.json
 *.html
