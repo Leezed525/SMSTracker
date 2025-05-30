@@ -1,0 +1,7 @@
+.idea/
+test_tmp/
+configs/
+checkpoints/
+pretrained/
+*.json
+*.html
