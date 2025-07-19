@@ -1,0 +1,109 @@
+data:
+  train:
+    datasets_name: [ "LasHeR_train" ]
+    datasets_ratio: [ 1 ]
+    sample_per_epoch: 60000
+  val:
+    datasets_name: [ "LasHeR_val" ]
+    datasets_ratio: [ 1 ]
+    sample_per_epoch: 10000
+  sampler_mode: "causal"
+  search:
+    factor: 4.0
+    size: 256
+    center_jitter: 3
+    scale_jitter: 0.25
+    number: 1
+  template:
+    factor: 2.0
+    size: 128
+    center_jitter: 0
+    scale_jitter: 0
+    number: 1
+  mean: [ 0.485, 0.456, 0.406 ]
+  std: [ 0.229, 0.224, 0.225 ]
+  max_sample_interval: 200
+dataset:
+  LasHeR:
+    train:
+      dir: /home/lzd/dataset/LasHeR/TrainingSet/trainingset
+    val:
+      dir: /home/lzd/dataset/LasHeR/TrainingSet/trainingset
+    test:
+      dir: /home/lzd/dataset/LasHeR/testingset
+  VisEvent:
+    train:
+      dir: /home/lzd/dataset/VisEvent/train/train_subset
+    val:
+      dir: /home/lzd/dataset/VisEvent/train/train_subset
+  DepthTrack:
+    train:
+      dir: /home/lzd/dataset/DepthTrack/train
+    val:
+      dir: /home/lzd/dataset/DepthTrack/train
+model:
+  backbone:
+    stride: 16
+    ce_loc: [ ]
+    ce_keep_ratio: [ ]
+    ce_template_range: ""
+  pureRMT:
+    embed_dim: [ 112, 224, 448, 640 ]
+    depth: [ 4, 8, 25, 8 ]
+    num_heads: [ 7, 7, 14, 20 ]
+    init_values: [ 2, 2, 2, 2 ]
+    head_ranges: [ 6, 6, 6, 6 ]
+    mlp_ratios: [ 4, 4, 3, 3 ]
+    chunkwise_recurrents: [ true,true,True,false ]
+    layer_scales: [ false, false, true, true ]
+    drop_path_rate: 0.5
+    combine_token_mode: "direct"
+  head:
+    num_channels: 256
+train:
+  multi_gpus: True
+  model_name: 'SMSTracker'
+  specifical_model_name: 'plScore_OS_sigma_RGBT'
+  batch_size: 1
+  num_worker: 16
+  train_cls: false
+  device: "cuda:1"
+  print_interval: 10
+  epoch: 60
+  lr: 0.0001
+  backbone_multiplier: 0.1
+  weight_decay: 0.0001
+  optimizer: "ADAMW"
+  lr_drop_epoch: 48
+  GIOU_weight: 5.0
+  L1_weight: 2.0
+  scheduler:
+    type: "step"
+    decay_rate: 0.1
+  save_epoch_interval: 1
+  val_epoch_interval: 1
+  drop_path_rate: 0.1
+  fix_bn: true
+  ce:
+    start_epoch: 0
+    warm_epoch: 16
+workspace:
+  dir: /home/lzd/workspace/SMSTracker
+  need_log: True
+  log_file: "/home/lzd/workspace/SMSTracker/logs/SMSTracker_RGBT/result.log"
+test:
+  checkpoint: "/home/lzd/workspace/SMSTracker/checkpoints/SMSTracker_RGBT.pth.tar"
+  epoch: 100
+  template:
+    factor: 2.0
+    size: 128
+  search:
+    factor: 4.0
+    size: 256
+analysis:
+  results_path: "/home/lzd/workspace/SMSTracker/RGBT_workspace/results"
+  result_plot_path: "/home/lzd/workspace/SMSTracker/RGBT_workspace/result_plot/"
+
+
+
+
