@@ -1,6 +1,5 @@
 .idea/
 test_tmp/
-configs/
 checkpoints/
 pretrained/*.tar
 *.json

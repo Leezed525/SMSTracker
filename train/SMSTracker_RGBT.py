@@ -36,23 +36,23 @@ def init_seeds(seed):
 
 
 def run():
-    cfg_name = "plscore_os_sigma_RGBD.yaml"
-    print("当前训练配置文件为：" + cfg_name)
     dist.init_process_group(backend='nccl')
-    cfg = env_setting(cfg_name=cfg_name)
+    cfg = env_setting(cfg_name="plscore_os_sigma_RGBT.yaml")
     local_rank = int(os.environ.get('LOCAL_RANK', -1))
     world_size = int(os.environ.get('WORLD_SIZE', 1))
+
+    seed = 3407
 
     # 多卡配置
     if local_rank != -1:
         print("使用多卡训练")
         torch.cuda.set_device(local_rank)
-        init_seeds(3407 + local_rank)
+        init_seeds(seed + local_rank)
     else:
         device = cfg.train.device
         print("使用" + device + "训练")
         torch.cuda.set_device(cfg.train.device)
-        init_seeds(3407)
+        init_seeds(seed)
 
     torch.backends.cudnn.benchmark = True
 
@@ -81,6 +81,7 @@ def run():
     actor = SMSTrackerActor(net=net, objective=objective, loss_weight=loss_weight, cfg=cfg)
 
     optimizer, lr_scheduler = get_optimizer_scheduler(net, cfg)
+
 
     trainer = LeeNetTrainer(actor=actor, loaders=[loader_train, loader_val], optimizer=optimizer, lr_scheduler=lr_scheduler, cfg=cfg, rank=local_rank)
     print("开始训练")
